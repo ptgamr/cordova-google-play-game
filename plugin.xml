@@ -18,7 +18,7 @@
 	</engines>
 
     <js-module src="www/google-play-game.js" name="GooglePlayGame">
-        <clobbers target="window.plugins.AdMob" />
+        <clobbers target="googleplaygame" />
     </js-module>
 
     <!-- android -->

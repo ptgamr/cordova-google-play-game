@@ -1,7 +1,5 @@
 package com.a42.cordova.plugins;
 
-import com.google.example.games.basegameutils.BaseGameActivity;
-
 public class GoogleGameService extends BaseGameActivity{
 
 	@Override

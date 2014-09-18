@@ -43,13 +43,16 @@ public class GooglePlayGame extends CordovaPlugin {
     
     private boolean isGpsAvailable = false;
     
-    private GoogleGameService googleGameService = new GoogleGameService();
+    private GoogleGameService googleGameService;
     
     @Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
     	super.initialize(cordova, webView);
     	isGpsAvailable = (GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity()) == ConnectionResult.SUCCESS);
     	Log.w(LOGTAG, String.format("isGooglePlayServicesAvailable: %s",  isGpsAvailable?"true":"false"));
+    	
+    	googleGameService = new GoogleGameService();
+    	googleGameService.getGameHelper().setup(googleGameService);
 	}
     
 	@Override

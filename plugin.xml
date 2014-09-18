@@ -23,17 +23,30 @@
 
     <!-- android -->
     <platform name="android">
+        <preference name="APP_ID" />
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="GooglePlayGame">
                 <param name="android-package" value="com.a42.cordova.plugins.GooglePlayGame"/>
             </feature>
         </config-file>
+        
+        <dependency id="com.google.playservices" />
+        <dependency id="android.support.v4" />
+        
         <source-file src="src/com/a42/cordova/plugins/GooglePlayGame.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="src/com/a42/cordova/plugins/GoogleGameService.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="src/com/a42/cordova/plugins/BaseGameActivity.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="src/com/a42/cordova/plugins/GameHelper.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="src/com/a42/cordova/plugins/GameHelperUtils.java" target-dir="src/com/a42/cordova/plugins/" />
-        <source-file src="libs/android-support-v4.jar" target-dir="libs/" />
-        <source-file src="libs/google-play-services.jar" target-dir="libs/" />
+        
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data
+              android:name="com.google.android.gms.games.APP_ID"
+              android:value="$APP_ID" />
+            <!-- Google Play Services SDK -->
+            <meta-data android:name="com.google.android.gms.version"
+                       android:value="@integer/google_play_services_version" />
+        </config-file>
+        
      </platform>
 </plugin>

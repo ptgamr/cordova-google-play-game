@@ -30,10 +30,11 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.a42.cordova.plugins.GameHelper.GameHelperListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-public class GooglePlayGame extends CordovaPlugin {
+public class GooglePlayGame extends CordovaPlugin implements GameHelperListener {
 	
 	private static final String LOGTAG = "GooglePlayGame";
 	
@@ -44,6 +45,7 @@ public class GooglePlayGame extends CordovaPlugin {
     private boolean isGpsAvailable = false;
     
     private GoogleGameService googleGameService;
+    private GameHelper gameHelper;
     
     @Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -51,8 +53,8 @@ public class GooglePlayGame extends CordovaPlugin {
     	isGpsAvailable = (GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity()) == ConnectionResult.SUCCESS);
     	Log.w(LOGTAG, String.format("isGooglePlayServicesAvailable: %s",  isGpsAvailable?"true":"false"));
     	
-    	googleGameService = new GoogleGameService();
-    	googleGameService.getGameHelper().setup(googleGameService);
+    	gameHelper = new GameHelper(cordova.getActivity(), BaseGameActivity.CLIENT_GAMES);
+    	gameHelper.setup(this);
 	}
     
 	@Override
@@ -82,7 +84,7 @@ public class GooglePlayGame extends CordovaPlugin {
 		cordova.getActivity().runOnUiThread(new Runnable(){
             @Override
             public void run() {
-            	googleGameService.doSignIn();
+            	gameHelper.beginUserInitiatedSignIn();
             	callbackContext.success();
             }
 		});
@@ -99,5 +101,17 @@ public class GooglePlayGame extends CordovaPlugin {
 		Log.w(LOGTAG, "executeShowLeaderboard");
     	callbackContext.success();
     	return null;
+	}
+
+	@Override
+	public void onSignInFailed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		// TODO Auto-generated method stub
+		
 	}
 }

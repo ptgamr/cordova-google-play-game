@@ -34,5 +34,6 @@
         <source-file src="src/com/a42/cordova/plugins/GameHelper.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="src/com/a42/cordova/plugins/GameHelperUtils.java" target-dir="src/com/a42/cordova/plugins/" />
         <source-file src="libs/android-support-v4.jar" target-dir="libs/" />
+        <source-file src="libs/google-play-services.jar" target-dir="libs/" />
      </platform>
 </plugin>

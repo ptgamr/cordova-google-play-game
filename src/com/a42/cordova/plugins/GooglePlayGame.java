@@ -28,11 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.a42.cordova.plugins.GameHelper.GameHelperListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.games.Games;
 
 public class GooglePlayGame extends CordovaPlugin implements GameHelperListener {
 	
@@ -42,10 +44,13 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     private static final String ACTION_SUBMIT_SCORE = "submitScore";
     private static final String ACTION_SHOW_LEADERBOARD = "showLeaderboard";
     
+    private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
+    
     private boolean isGpsAvailable = false;
     
-    private GoogleGameService googleGameService;
     private GameHelper gameHelper;
+    
+    private CallbackContext authCallbackContext;
     
     @Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -81,6 +86,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 	private PluginResult executeAuth(JSONObject options, final CallbackContext callbackContext) {
 		Log.w(LOGTAG, "executeAuth");
 		
+		authCallbackContext = callbackContext;
+		
 		cordova.getActivity().runOnUiThread(new Runnable(){
             @Override
             public void run() {
@@ -91,27 +98,47 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     	return null;
 	}
 	
-	private PluginResult executeSubmitScore(JSONObject options, CallbackContext callbackContext) {
+	private PluginResult executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
 		Log.w(LOGTAG, "executeSubmitScore");
-    	callbackContext.success();
+		cordova.getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+            	try {
+					Games.Leaderboards.submitScore(gameHelper.getApiClient(), options.getString("leaderboardId"), options.getInt("score"));
+					callbackContext.success();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					callbackContext.error("error while submitting score");
+				}
+            }
+		});
     	return null;
 	}
 	
-	private PluginResult executeShowLeaderboard(JSONObject options, CallbackContext callbackContext) {
+	private PluginResult executeShowLeaderboard(JSONObject options, final CallbackContext callbackContext) {
 		Log.w(LOGTAG, "executeShowLeaderboard");
-    	callbackContext.success();
+		
+		final GooglePlayGame plugin = this;
+		
+		cordova.getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+        		Intent allLeaderboardsIntent = Games.Leaderboards.getAllLeaderboardsIntent(gameHelper.getApiClient());
+        		cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
+				callbackContext.success();
+            }
+		});
     	return null;
 	}
 
 	@Override
 	public void onSignInFailed() {
-		// TODO Auto-generated method stub
-		
+		authCallbackContext.error("SIGN IN FALIED");
 	}
 
 	@Override
 	public void onSignInSucceeded() {
-		// TODO Auto-generated method stub
-		
+		authCallbackContext.error("SIGN IN SUCCESS");
 	}
 }

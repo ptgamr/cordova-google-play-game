@@ -30,6 +30,10 @@
             </feature>
         </config-file>
         
+        <config-file target="res/value/strings.xml" parent="/resources">
+            <string name="app_id">$APP_ID</string>
+        </config-file>
+        
         <dependency id="com.google.playservices" />
         <dependency id="android.support.v4" />
         
@@ -42,7 +46,7 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data
               android:name="com.google.android.gms.games.APP_ID"
-              android:value="$APP_ID" />
+              android:value="@string/app_id" />
         </config-file>
         
      </platform>

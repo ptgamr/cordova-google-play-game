@@ -104,8 +104,12 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             @Override
             public void run() {
             	try {
-					Games.Leaderboards.submitScore(gameHelper.getApiClient(), options.getString("leaderboardId"), options.getInt("score"));
-					callbackContext.success();
+            		if (gameHelper.isSignedIn()) {
+            			Games.Leaderboards.submitScore(gameHelper.getApiClient(), options.getString("leaderboardId"), options.getInt("score"));
+            			callbackContext.success();
+            		} else {
+            			callbackContext.error("not yet signed in");
+            		}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -124,9 +128,14 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 		cordova.getActivity().runOnUiThread(new Runnable(){
             @Override
             public void run() {
-        		Intent allLeaderboardsIntent = Games.Leaderboards.getAllLeaderboardsIntent(gameHelper.getApiClient());
-        		cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
-				callbackContext.success();
+            	
+            	if (gameHelper.isSignedIn()) {
+            		Intent allLeaderboardsIntent = Games.Leaderboards.getAllLeaderboardsIntent(gameHelper.getApiClient());
+            		cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
+            		callbackContext.success();
+            	} else {
+            		callbackContext.error("Not yet signed in");
+            	}
             }
 		});
     	return null;

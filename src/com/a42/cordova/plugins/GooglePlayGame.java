@@ -43,6 +43,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 	private static final String ACTION_AUTH = "auth";
     private static final String ACTION_SUBMIT_SCORE = "submitScore";
     private static final String ACTION_SHOW_LEADERBOARD = "showLeaderboard";
+    private static final String ACTION_REPORT_ACHIVEMENT = "reportAchievement";
     
     private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
     
@@ -76,6 +77,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 		} else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
 			JSONObject options = inputs.optJSONObject(0);
 			result = executeShowLeaderboard(options, callbackContext);
+		} else if(ACTION_REPORT_ACHIVEMENT.equals(action)){
+			JSONObject options = inputs.optJSONObject(0);
+			result = executeReportAchivement(options, callbackContext);
 		}
 		
 		if(result != null) callbackContext.sendPluginResult( result );
@@ -135,6 +139,23 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             		callbackContext.success();
             	} else {
             		callbackContext.error("Not yet signed in");
+            	}
+            }
+		});
+    	return null;
+	}
+	
+	private PluginResult executeReportAchivement(final JSONObject options, final CallbackContext callbackContext) {
+		Log.w(LOGTAG, "executeReportAchivement");
+		cordova.getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+            	
+            	if (gameHelper.isSignedIn()) {
+            		Games.Achievements.unlock(gameHelper.getApiClient(), options.optString("achivementId"));
+            		callbackContext.success();
+            	} else {
+            		callbackContext.error("executeReportAchivement: Not yet signed in");
             	}
             }
 		});

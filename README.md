@@ -6,6 +6,7 @@ Cordova Plugin For Google Play Game Service
 #### Live demo
 
 See this plugin working in a live app: https://play.google.com/store/apps/details?id=com.a42.xephinhtuoitho
+How it works: http://trinhtrunganh.com/cordova-plugin-for-google-play-game-service/
 
 ### Before you start
 

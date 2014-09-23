@@ -67,7 +67,7 @@ Currently, only Android is supported
 ## Donation:
 Wish you dont mind buying me a cup of coffee (highfive)
 
-https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=anh%2etrinhtrung%40gmail%2ecom&lc=US&item_name=Cordova%20Google%20Play%20Game&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
+[Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=anh%2etrinhtrung%40gmail%2ecom&lc=US&item_name=Cordova%20Google%20Play%20Game&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 ## License
 

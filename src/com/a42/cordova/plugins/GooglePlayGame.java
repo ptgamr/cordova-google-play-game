@@ -61,6 +61,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     	
     	gameHelper = new GameHelper(cordova.getActivity(), BaseGameActivity.CLIENT_GAMES);
     	gameHelper.setup(this);
+    	
+    	cordova.setActivityResultCallback(this);
 	}
     
 	@Override
@@ -170,5 +172,10 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 	@Override
 	public void onSignInSucceeded() {
 		authCallbackContext.error("SIGN IN SUCCESS");
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		gameHelper.onActivityResult(requestCode, resultCode, intent);
 	}
 }

@@ -5,7 +5,12 @@ Cordova Plugin For Google Play Game Service
 
 ### Live demo
 
-See this plugin working in a live app: https://play.google.com/store/apps/details?id=com.a42.xephinhtuoitho
+See this plugin working in a live app: 
+
+[![WOW PUZZLES iOS](https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg)](https://itunes.apple.com/vn/app/wow-puzzles/id916475017?mt=8)
+
+[![WOW PUZZLES Android](https://developer.android.com/images/brand/en_app_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.a42.xephinhtuoitho)
+
 How it works: http://trinhtrunganh.com/cordova-plugin-for-google-play-game-service/
 
 ### Before you start

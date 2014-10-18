@@ -8,6 +8,10 @@ GooglePlayGame.prototype.auth = function (success, failure) {
     exec(success, failure, "GooglePlayGame", "auth", []);
 };
 
+GooglePlayGame.prototype.signOut = function (success, failure) {
+    exec(success, failure, "GooglePlayGame", "signOut", []);
+};
+
 GooglePlayGame.prototype.getPlayerImage = function (success, failure) {
     exec(success, failure, "GooglePlayGame", "getPlayerImage", []);
 };
@@ -28,8 +32,8 @@ GooglePlayGame.prototype.resetAchievements = function (success, failure) {
     exec(success, failure, "GooglePlayGame", "resetAchievements", []);
 };
 
-GooglePlayGame.prototype.getAchievements = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "getAchievements", []);
+GooglePlayGame.prototype.showAchievements = function (success, failure, data) {
+    exec(success, failure, "GooglePlayGame", "showAchievements", []);
 };
 
 module.exports = new GooglePlayGame();

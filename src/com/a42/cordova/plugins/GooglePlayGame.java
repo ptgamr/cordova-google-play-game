@@ -37,145 +37,145 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 
 public class GooglePlayGame extends CordovaPlugin implements GameHelperListener {
-	
-	private static final String LOGTAG = "GooglePlayGame";
-	
-	private static final String ACTION_AUTH = "auth";
+
+    private static final String LOGTAG = "GooglePlayGame";
+
+    private static final String ACTION_AUTH = "auth";
     private static final String ACTION_SUBMIT_SCORE = "submitScore";
     private static final String ACTION_SHOW_LEADERBOARD = "showLeaderboard";
     private static final String ACTION_REPORT_ACHIEVEMENT = "reportAchievement";
-    
+
     private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
-    
+
     private boolean isGpsAvailable = false;
-    
+
     private GameHelper gameHelper;
-    
+
     private CallbackContext authCallbackContext;
-    
+
     @Override
-	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-    	super.initialize(cordova, webView);
-    	isGpsAvailable = (GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity()) == ConnectionResult.SUCCESS);
-    	Log.w(LOGTAG, String.format("isGooglePlayServicesAvailable: %s",  isGpsAvailable?"true":"false"));
-    	
-    	gameHelper = new GameHelper(cordova.getActivity(), BaseGameActivity.CLIENT_GAMES);
-    	gameHelper.setup(this);
-    	
-    	cordova.setActivityResultCallback(this);
-	}
-    
-	@Override
-	public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext) throws JSONException {
-		
-		PluginResult result = null;
-		
-		if (ACTION_AUTH.equals(action)) {
-			JSONObject options = inputs.optJSONObject(0);
-			result = executeAuth(options, callbackContext);
-		} else if (ACTION_SUBMIT_SCORE.equals(action)) {
-			JSONObject options = inputs.optJSONObject(0);
-			result = executeSubmitScore(options, callbackContext);
-		} else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
-			JSONObject options = inputs.optJSONObject(0);
-			result = executeShowLeaderboard(options, callbackContext);
-		} else if(ACTION_REPORT_ACHIEVEMENT.equals(action)){
-			JSONObject options = inputs.optJSONObject(0);
-			result = executeReportAchievement(options, callbackContext);
-		}
-		
-		if(result != null) callbackContext.sendPluginResult( result );
-		
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        isGpsAvailable = (GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity()) == ConnectionResult.SUCCESS);
+        Log.w(LOGTAG, String.format("isGooglePlayServicesAvailable: %s", isGpsAvailable ? "true" : "false"));
+
+        gameHelper = new GameHelper(cordova.getActivity(), BaseGameActivity.CLIENT_GAMES);
+        gameHelper.setup(this);
+
+        cordova.setActivityResultCallback(this);
+    }
+
+    @Override
+    public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext) throws JSONException {
+
+        PluginResult result = null;
+
+        if (ACTION_AUTH.equals(action)) {
+            JSONObject options = inputs.optJSONObject(0);
+            result = executeAuth(options, callbackContext);
+        } else if (ACTION_SUBMIT_SCORE.equals(action)) {
+            JSONObject options = inputs.optJSONObject(0);
+            result = executeSubmitScore(options, callbackContext);
+        } else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
+            JSONObject options = inputs.optJSONObject(0);
+            result = executeShowLeaderboard(options, callbackContext);
+        } else if (ACTION_REPORT_ACHIEVEMENT.equals(action)) {
+            JSONObject options = inputs.optJSONObject(0);
+            result = executeReportAchievement(options, callbackContext);
+        }
+
+        if (result != null) callbackContext.sendPluginResult(result);
+
         return true;
-	}
-	
-	private PluginResult executeAuth(JSONObject options, final CallbackContext callbackContext) {
-		Log.w(LOGTAG, "executeAuth");
-		
-		authCallbackContext = callbackContext;
-		
-		cordova.getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-            	gameHelper.beginUserInitiatedSignIn();
-            	callbackContext.success();
-            }
-		});
-    	return null;
-	}
-	
-	private PluginResult executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
-		Log.w(LOGTAG, "executeSubmitScore");
-		cordova.getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-            	try {
-            		if (gameHelper.isSignedIn()) {
-            			Games.Leaderboards.submitScore(gameHelper.getApiClient(), options.getString("leaderboardId"), options.getInt("score"));
-            			callbackContext.success();
-            		} else {
-            			callbackContext.error("not yet signed in");
-            		}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					callbackContext.error("error while submitting score");
-				}
-            }
-		});
-    	return null;
-	}
-	
-	private PluginResult executeShowLeaderboard(JSONObject options, final CallbackContext callbackContext) {
-		Log.w(LOGTAG, "executeShowLeaderboard");
-		
-		final GooglePlayGame plugin = this;
-		
-		cordova.getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-            	
-            	if (gameHelper.isSignedIn()) {
-            		Intent allLeaderboardsIntent = Games.Leaderboards.getAllLeaderboardsIntent(gameHelper.getApiClient());
-            		cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
-            		callbackContext.success();
-            	} else {
-            		callbackContext.error("Not yet signed in");
-            	}
-            }
-		});
-    	return null;
-	}
-	
-	private PluginResult executeReportAchievement(final JSONObject options, final CallbackContext callbackContext) {
-		Log.w(LOGTAG, "executeReportAchievement");
-		cordova.getActivity().runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-            	
-            	if (gameHelper.isSignedIn()) {
-            		Games.Achievements.unlock(gameHelper.getApiClient(), options.optString("achievementId"));
-            		callbackContext.success();
-            	} else {
-            		callbackContext.error("executeReportAchivement: Not yet signed in");
-            	}
-            }
-		});
-    	return null;
-	}
+    }
 
-	@Override
-	public void onSignInFailed() {
-		authCallbackContext.error("SIGN IN FALIED");
-	}
+    private PluginResult executeAuth(JSONObject options, final CallbackContext callbackContext) {
+        Log.w(LOGTAG, "executeAuth");
 
-	@Override
-	public void onSignInSucceeded() {
-		authCallbackContext.error("SIGN IN SUCCESS");
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		gameHelper.onActivityResult(requestCode, resultCode, intent);
-	}
+        authCallbackContext = callbackContext;
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                gameHelper.beginUserInitiatedSignIn();
+                callbackContext.success();
+            }
+        });
+        return null;
+    }
+
+    private PluginResult executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
+        Log.w(LOGTAG, "executeSubmitScore");
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (gameHelper.isSignedIn()) {
+                        Games.Leaderboards.submitScore(gameHelper.getApiClient(), options.getString("leaderboardId"), options.getInt("score"));
+                        callbackContext.success();
+                    } else {
+                        callbackContext.error("not yet signed in");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    callbackContext.error("error while submitting score");
+                }
+            }
+        });
+        return null;
+    }
+
+    private PluginResult executeShowLeaderboard(JSONObject options, final CallbackContext callbackContext) {
+        Log.w(LOGTAG, "executeShowLeaderboard");
+
+        final GooglePlayGame plugin = this;
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (gameHelper.isSignedIn()) {
+                    Intent allLeaderboardsIntent = Games.Leaderboards.getAllLeaderboardsIntent(gameHelper.getApiClient());
+                    cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
+                    callbackContext.success();
+                } else {
+                    callbackContext.error("Not yet signed in");
+                }
+            }
+        });
+        return null;
+    }
+
+    private PluginResult executeReportAchievement(final JSONObject options, final CallbackContext callbackContext) {
+        Log.w(LOGTAG, "executeReportAchievement");
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (gameHelper.isSignedIn()) {
+                    Games.Achievements.unlock(gameHelper.getApiClient(), options.optString("achievementId"));
+                    callbackContext.success();
+                } else {
+                    callbackContext.error("executeReportAchivement: Not yet signed in");
+                }
+            }
+        });
+        return null;
+    }
+
+    @Override
+    public void onSignInFailed() {
+        authCallbackContext.error("SIGN IN FALIED");
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        authCallbackContext.error("SIGN IN SUCCESS");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        gameHelper.onActivityResult(requestCode, resultCode, intent);
+    }
 }

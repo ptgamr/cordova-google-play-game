@@ -11,16 +11,25 @@ var actions = ['auth', 'signOut', 'isSignedIn',
 
 actions.forEach(function (action) {
     GooglePlayGame.prototype[action] = function (data, success, failure) {
-        data = data || {};
-        success = success || function (message) {
-            console.log(GOOGLE_PLAY_GAME + '.' + action + ': executed successfully');
-            message && console.log(message);
-        };
+        var defaultSuccessCallback = function () {
+                console.log(GOOGLE_PLAY_GAME + '.' + action + ': executed successfully');
+            };
 
-        failure = failure || function (message) {
-            console.warn(GOOGLE_PLAY_GAME + '.' + action + ': failed on execution');
-            message && console.warn(message);
-        };
+        var defaultFailureCallback = function () {
+                console.warn(GOOGLE_PLAY_GAME + '.' + action + ': failed on execution');
+            };
+
+        if (typeof data === 'function') {
+            // Assume providing successCallback as 1st arg and possibly failureCallback as 2nd arg
+            success = data;
+            failure = success || defaultFailureCallback;
+            data = {};
+        } else {
+            data = data || {};
+            success = success || defaultSuccessCallback;
+            failure = failure || defaultFailureCallback;
+        }
+
         exec(success, failure, GOOGLE_PLAY_GAME, action, [data]);
     }
 });

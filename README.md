@@ -45,7 +45,7 @@ googleplaygame.signout();
 To check if the user is already logged in (eg. to determine weather to show the Log In or Log Out button), use the following
 
 ```
-googleplaygame.isSignedIn({}, function (result) {
+googleplaygame.isSignedIn(function (result) {
 	// ‘result’ is a JSON object with a single boolean property of ‘isSignedIn’
 	// {
 	// 		“isSignedIn” : true

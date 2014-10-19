@@ -86,6 +86,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             result = executeSubmitScore(options, callbackContext);
         } else if (ACTION_SHOW_ALL_LEADERBOARDS.equals(action)) {
             result = executeShowAllLeaderboards(callbackContext);
+        } else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
+            result = executeShowLeaderboard(options, callbackContext);
         } else if (ACTION_SHOW_ACHIEVEMENTS.equals(action)) {
             result = executeShowAchievements(callbackContext);
         } else if (ACTION_UNLOCK_ACHIEVEMENT.equals(action)) {
@@ -165,6 +167,32 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 } else {
                     Log.w(LOGTAG, "executeShowAllLeaderboards: not yet signed in");
                     callbackContext.error("executeShowAllLeaderboards: not yet signed in");
+                }
+            }
+        });
+        return null;
+    }
+
+    private PluginResult executeShowLeaderboard(final JSONObject options, final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeShowLeaderboard");
+
+        final GooglePlayGame plugin = this;
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (gameHelper.isSignedIn()) {
+                        Intent leaderboardIntent = Games.Leaderboards.getLeaderboardIntent(gameHelper.getApiClient(), options.getString("leaderboardId"));
+                        cordova.startActivityForResult(plugin, leaderboardIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
+                        callbackContext.success();
+                    } else {
+                        Log.w(LOGTAG, "executeShowLeaderboard: not yet signed in");
+                        callbackContext.error("executeShowLeaderboard: not yet signed in");
+                    }
+                } catch (JSONException e) {
+                    Log.w(LOGTAG, "executeShowLeaderboard: unexpected error", e);
+                    callbackContext.error("executeShowLeaderboard: error while showing specific leaderboard");
                 }
             }
         });

@@ -92,6 +92,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             result = executeShowAchievements(callbackContext);
         } else if (ACTION_UNLOCK_ACHIEVEMENT.equals(action)) {
             result = executeUnlockAchievement(options, callbackContext);
+        } else if (ACTION_INCREMENT_ACHIEVEMENT.equals(action)) {
+            result = executeIncrementAchievement(options, callbackContext);
         }
 
         if (result != null) {
@@ -212,6 +214,24 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 } else {
                     Log.w(LOGTAG, "executeUnlockAchievement: not yet signed in");
                     callbackContext.error("executeUnlockAchievement: not yet signed in");
+                }
+            }
+        });
+        return null;
+    }
+
+    private PluginResult executeIncrementAchievement(final JSONObject options, final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeIncrementAchievement");
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (gameHelper.isSignedIn()) {
+                    Games.Achievements.increment(gameHelper.getApiClient(), options.optString("achievementId"), options.optInt("numSteps"));
+                    callbackContext.success();
+                } else {
+                    Log.w(LOGTAG, "executeIncrementAchievement: not yet signed in");
+                    callbackContext.error("executeIncrementAchievement: not yet signed in");
                 }
             }
         });

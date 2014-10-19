@@ -42,10 +42,14 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 
     private static final String ACTION_AUTH = "auth";
     private static final String ACTION_SIGN_OUT = "signOut";
+
     private static final String ACTION_SUBMIT_SCORE = "submitScore";
+    private static final String ACTION_SHOW_ALL_LEADERBOARDS = "showAllLeaderboards";
     private static final String ACTION_SHOW_LEADERBOARD = "showLeaderboard";
+
+    private static final String ACTION_UNLOCK_ACHIEVEMENT = "unlockAchievement";
+    private static final String ACTION_INCREMENT_ACHIEVEMENT = "incrementAchievement";
     private static final String ACTION_SHOW_ACHIEVEMENTS = "showAchievements";
-    private static final String ACTION_REPORT_ACHIEVEMENT = "reportAchievement";
 
     private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
     private static final int ACTIVITY_CODE_SHOW_ACHIEVEMENTS = 1;
@@ -75,17 +79,17 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
         JSONObject options = inputs.optJSONObject(0);
 
         if (ACTION_AUTH.equals(action)) {
-            result = executeAuth(options, callbackContext);
+            result = executeAuth(callbackContext);
         } else if (ACTION_SIGN_OUT.equals(action)) {
-            result = executeSignOut(options, callbackContext);
+            result = executeSignOut(callbackContext);
         } else if (ACTION_SUBMIT_SCORE.equals(action)) {
             result = executeSubmitScore(options, callbackContext);
-        } else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
-            result = executeShowLeaderboard(options, callbackContext);
+        } else if (ACTION_SHOW_ALL_LEADERBOARDS.equals(action)) {
+            result = executeShowAllLeaderboards(callbackContext);
         } else if (ACTION_SHOW_ACHIEVEMENTS.equals(action)) {
-            result = executeShowAchievements(options, callbackContext);
-        } else if (ACTION_REPORT_ACHIEVEMENT.equals(action)) {
-            result = executeReportAchievement(options, callbackContext);
+            result = executeShowAchievements(callbackContext);
+        } else if (ACTION_UNLOCK_ACHIEVEMENT.equals(action)) {
+            result = executeUnlockAchievement(options, callbackContext);
         }
 
         if (result != null) {
@@ -95,7 +99,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
         return true;
     }
 
-    private PluginResult executeAuth(JSONObject options, final CallbackContext callbackContext) {
+    private PluginResult executeAuth(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeAuth");
 
         authCallbackContext = callbackContext;
@@ -110,7 +114,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
         return null;
     }
 
-    private PluginResult executeSignOut(JSONObject options, final CallbackContext callbackContext) {
+    private PluginResult executeSignOut(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeSignOut");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -137,7 +141,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                         callbackContext.error("executeSubmitScore: not yet signed in");
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.w(LOGTAG, "executeSubmitScore: unexpected error", e);
                     callbackContext.error("executeSubmitScore: error while submitting score");
                 }
             }
@@ -145,8 +149,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
         return null;
     }
 
-    private PluginResult executeShowLeaderboard(JSONObject options, final CallbackContext callbackContext) {
-        Log.d(LOGTAG, "executeShowLeaderboard");
+    private PluginResult executeShowAllLeaderboards(final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeShowAllLeaderboards");
 
         final GooglePlayGame plugin = this;
 
@@ -159,15 +163,16 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                     cordova.startActivityForResult(plugin, allLeaderboardsIntent, ACTIVITY_CODE_SHOW_LEADERBOARD);
                     callbackContext.success();
                 } else {
-                    callbackContext.error("executeShowLeaderboard: not yet signed in");
+                    Log.w(LOGTAG, "executeShowAllLeaderboards: not yet signed in");
+                    callbackContext.error("executeShowAllLeaderboards: not yet signed in");
                 }
             }
         });
         return null;
     }
 
-    private PluginResult executeReportAchievement(final JSONObject options, final CallbackContext callbackContext) {
-        Log.d(LOGTAG, "executeReportAchievement");
+    private PluginResult executeUnlockAchievement(final JSONObject options, final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeUnlockAchievement");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -177,14 +182,15 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                     Games.Achievements.unlock(gameHelper.getApiClient(), options.optString("achievementId"));
                     callbackContext.success();
                 } else {
-                    callbackContext.error("executeReportAchievement: not yet signed in");
+                    Log.w(LOGTAG, "executeUnlockAchievement: not yet signed in");
+                    callbackContext.error("executeUnlockAchievement: not yet signed in");
                 }
             }
         });
         return null;
     }
 
-    private PluginResult executeShowAchievements(final JSONObject options, final CallbackContext callbackContext) {
+    private PluginResult executeShowAchievements(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeShowAchievements");
 
         final GooglePlayGame plugin = this;
@@ -198,6 +204,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                     cordova.startActivityForResult(plugin, achievementsIntent, ACTIVITY_CODE_SHOW_ACHIEVEMENTS);
                     callbackContext.success();
                 } else {
+                    Log.w(LOGTAG, "executeShowAchievements: not yet signed in");
                     callbackContext.error("executeShowAchievements: not yet signed in");
                 }
             }

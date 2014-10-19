@@ -15,7 +15,7 @@ How it works: http://trinhtrunganh.com/cordova-plugin-for-google-play-game-servi
 
 ### Before you start
 
-Understand about `Leaderboard` and `Achivement`. Setting up your game in Google Play Developer Console https://developers.google.com/games/services/android/quickstart
+Understand about **Leaderboard** and **Achievement**. Setting up your game in Google Play Developer Console https://developers.google.com/games/services/android/quickstart
 
 ## Install
 
@@ -27,42 +27,59 @@ cordova plugin add https://github.com/ptgamr/cordova-google-play-game.git --vari
 
 ### Auth
 
-You should do this as soon as your deviceready event has been fired. The plug handles the various auth scenarios for you.
+You should do this as soon as your `deviceready` event has been fired. The plugin handles the various auth scenarios for you.
 
 ```
-googleplaygame.auth(successCallback, failureCallback);
+googleplaygame.auth();
 ```
 
 ### Submit Score
 
-Ensure you have had a successful callback from `gamecenter.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the leaderboardId.
+Ensure you have had a successful callback from `gamecenter.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the `leaderboardId`.
 
 ```
 var data = {
     score: 10,
     leaderboardId: "board1"
 };
-googleplaygame.submitScore(successCallback, failureCallback, data);
+googleplaygame.submitScore(data);
 ```
 
-### Show leaderboard
+### Show all leaderboards
 
-Launches the native Game Center leaderboard view controller for a leaderboard.
+Launches the native Game Center leaderboard view controller to show all the leaderboards.
 
 ```
-googleplaygame.showLeaderboard(successCallback, failureCallback, {});
+googleplaygame.showAllLeaderboards();
 ```
 
-### Report achievement
+### Unlock achievement
 
-Reports an achievement to the game center:
+Unlocks an achievement to the game center:
 
 ```
 var data = {
 	achievementId: "MyAchievementName"
 };
 
-googleplaygame.reportAchievement(successCallback, failureCallback, data);
+googleplaygame.unlockAchievement(data);
+```
+
+## Success/Failure callbacks
+
+For all methods, you can optionally provide custom success/failure callbacks.
+
+For example:
+
+```
+var successfullyLoggedIn = function () { ... };
+var failedToLogin = function () { ... };
+googleplaygame.auth(successfullyLoggedIn, failedToLogin);
+
+var data = { ... };
+var successfullySubmittedScore  = function () { ... };
+var failedToSubmitScore  = function () { ... };
+googleplaygame.submitScore(data, successfullySubmittedScore, failedToSubmitScore);
 ```
 
 ## Platform

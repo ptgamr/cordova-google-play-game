@@ -1,39 +1,28 @@
 var exec = require("cordova/exec");
+var GOOGLE_PLAY_GAME = "GooglePlayGame";
 
 var GooglePlayGame = function () {
-    this.name = "GooglePlayGame";
+    this.name = GOOGLE_PLAY_GAME;
 };
 
-GooglePlayGame.prototype.auth = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "auth", []);
-};
+var actions = ['auth', 'signOut', 
+               'submitScore', 'showAllLeaderboards', 'showLeaderboard',
+               'unlockAchievement', 'incrementAchievement', 'showAchievements'];
 
-GooglePlayGame.prototype.signOut = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "signOut", []);
-};
+actions.forEach(function (action) {
+    GooglePlayGame.prototype[action] = function (data, success, failure) {
+        data = data || {};
+        success = success || function (message) {
+            console.log(GOOGLE_PLAY_GAME + '.' + action + ': executed successfully');
+            message && console.log(message);
+        };
 
-GooglePlayGame.prototype.getPlayerImage = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "getPlayerImage", []);
-};
-
-GooglePlayGame.prototype.submitScore = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "submitScore", [data]);
-};
-
-GooglePlayGame.prototype.showLeaderboard = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "showLeaderboard", [data]);
-};
-
-GooglePlayGame.prototype.reportAchievement = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "reportAchievement", [data]);
-};
-               
-GooglePlayGame.prototype.resetAchievements = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "resetAchievements", []);
-};
-
-GooglePlayGame.prototype.showAchievements = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "showAchievements", []);
-};
+        failure = failure || function (message) {
+            console.warn(GOOGLE_PLAY_GAME + '.' + action + ': failed on execution');
+            message && console.warn(message);
+        };
+        exec(success, failure, GOOGLE_PLAY_GAME, action, [data]);
+    }
+});
 
 module.exports = new GooglePlayGame();

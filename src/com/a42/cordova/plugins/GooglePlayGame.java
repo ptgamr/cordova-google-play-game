@@ -112,7 +112,6 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             @Override
             public void run() {
                 gameHelper.beginUserInitiatedSignIn();
-                callbackContext.success();
             }
         });
     }
@@ -277,7 +276,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 
     @Override
     public void onSignInSucceeded() {
-        authCallbackContext.error("SIGN IN SUCCESS");
+        authCallbackContext.success("SIGN IN SUCCESS");
     }
 
     @Override

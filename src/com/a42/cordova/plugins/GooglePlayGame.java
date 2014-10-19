@@ -76,37 +76,34 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     @Override
     public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext) throws JSONException {
 
-        PluginResult result = null;
         JSONObject options = inputs.optJSONObject(0);
 
         if (ACTION_AUTH.equals(action)) {
-            result = executeAuth(callbackContext);
+            executeAuth(callbackContext);
         } else if (ACTION_SIGN_OUT.equals(action)) {
-            result = executeSignOut(callbackContext);
+            executeSignOut(callbackContext);
         } else if (ACTION_IS_SIGNEDIN.equals(action)) {
-            result = executeIsSignedIn(callbackContext);
+            executeIsSignedIn(callbackContext);
         } else if (ACTION_SUBMIT_SCORE.equals(action)) {
-            result = executeSubmitScore(options, callbackContext);
+            executeSubmitScore(options, callbackContext);
         } else if (ACTION_SHOW_ALL_LEADERBOARDS.equals(action)) {
-            result = executeShowAllLeaderboards(callbackContext);
+            executeShowAllLeaderboards(callbackContext);
         } else if (ACTION_SHOW_LEADERBOARD.equals(action)) {
-            result = executeShowLeaderboard(options, callbackContext);
+            executeShowLeaderboard(options, callbackContext);
         } else if (ACTION_SHOW_ACHIEVEMENTS.equals(action)) {
-            result = executeShowAchievements(callbackContext);
+            executeShowAchievements(callbackContext);
         } else if (ACTION_UNLOCK_ACHIEVEMENT.equals(action)) {
-            result = executeUnlockAchievement(options, callbackContext);
+            executeUnlockAchievement(options, callbackContext);
         } else if (ACTION_INCREMENT_ACHIEVEMENT.equals(action)) {
-            result = executeIncrementAchievement(options, callbackContext);
-        }
-
-        if (result != null) {
-            callbackContext.sendPluginResult(result);
+            executeIncrementAchievement(options, callbackContext);
+        } else {
+            return false; // Tried to execute an unknown method
         }
 
         return true;
     }
 
-    private PluginResult executeAuth(final CallbackContext callbackContext) {
+    private void executeAuth(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeAuth");
 
         authCallbackContext = callbackContext;
@@ -118,10 +115,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 callbackContext.success();
             }
         });
-        return null;
     }
 
-    private PluginResult executeSignOut(final CallbackContext callbackContext) {
+    private void executeSignOut(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeSignOut");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -131,10 +127,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 callbackContext.success();
             }
         });
-        return null;
     }
 
-    private PluginResult executeIsSignedIn(final CallbackContext callbackContext) {
+    private void executeIsSignedIn(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeIsSignedIn");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -150,10 +145,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
     
-    private PluginResult executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
+    private void executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
         Log.d(LOGTAG, "executeSubmitScore");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -172,10 +166,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
-    private PluginResult executeShowAllLeaderboards(final CallbackContext callbackContext) {
+    private void executeShowAllLeaderboards(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeShowAllLeaderboards");
 
         final GooglePlayGame plugin = this;
@@ -194,10 +187,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
-    private PluginResult executeShowLeaderboard(final JSONObject options, final CallbackContext callbackContext) {
+    private void executeShowLeaderboard(final JSONObject options, final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeShowLeaderboard");
 
         final GooglePlayGame plugin = this;
@@ -220,10 +212,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
-    private PluginResult executeUnlockAchievement(final JSONObject options, final CallbackContext callbackContext) {
+    private void executeUnlockAchievement(final JSONObject options, final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeUnlockAchievement");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -239,10 +230,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
-    private PluginResult executeIncrementAchievement(final JSONObject options, final CallbackContext callbackContext) {
+    private void executeIncrementAchievement(final JSONObject options, final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeIncrementAchievement");
 
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -257,10 +247,9 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
-    private PluginResult executeShowAchievements(final CallbackContext callbackContext) {
+    private void executeShowAchievements(final CallbackContext callbackContext) {
         Log.d(LOGTAG, "executeShowAchievements");
 
         final GooglePlayGame plugin = this;
@@ -279,7 +268,6 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
                 }
             }
         });
-        return null;
     }
 
     @Override

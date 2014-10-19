@@ -42,6 +42,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 
     private static final String ACTION_AUTH = "auth";
     private static final String ACTION_SIGN_OUT = "signOut";
+    private static final String ACTION_IS_SIGNEDIN = "isSignedIn";
 
     private static final String ACTION_SUBMIT_SCORE = "submitScore";
     private static final String ACTION_SHOW_ALL_LEADERBOARDS = "showAllLeaderboards";
@@ -82,6 +83,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             result = executeAuth(callbackContext);
         } else if (ACTION_SIGN_OUT.equals(action)) {
             result = executeSignOut(callbackContext);
+        } else if (ACTION_IS_SIGNEDIN.equals(action)) {
+            result = executeIsSignedIn(callbackContext);
         } else if (ACTION_SUBMIT_SCORE.equals(action)) {
             result = executeSubmitScore(options, callbackContext);
         } else if (ACTION_SHOW_ALL_LEADERBOARDS.equals(action)) {
@@ -131,6 +134,25 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
         return null;
     }
 
+    private PluginResult executeIsSignedIn(final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeIsSignedIn");
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject result = new JSONObject();
+                    result.put("isSignedIn", gameHelper.isSignedIn());
+                    callbackContext.success(result);
+                } catch (JSONException e) {
+                    Log.w(LOGTAG, "executeIsSignedIn: unable to determine if user is signed in or not", e);
+                    callbackContext.error("executeIsSignedIn: unable to determine if user is signed in or not");
+                }
+            }
+        });
+        return null;
+    }
+    
     private PluginResult executeSubmitScore(final JSONObject options, final CallbackContext callbackContext) throws JSONException {
         Log.d(LOGTAG, "executeSubmitScore");
 

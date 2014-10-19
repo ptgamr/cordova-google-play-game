@@ -5,7 +5,7 @@ var GooglePlayGame = function () {
     this.name = GOOGLE_PLAY_GAME;
 };
 
-var actions = ['auth', 'signOut', 
+var actions = ['auth', 'signOut', 'isSignedIn',
                'submitScore', 'showAllLeaderboards', 'showLeaderboard',
                'unlockAchievement', 'incrementAchievement', 'showAchievements'];
 

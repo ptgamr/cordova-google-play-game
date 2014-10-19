@@ -25,17 +25,41 @@ cordova plugin add https://github.com/ptgamr/cordova-google-play-game.git --vari
 
 ## Usage
 
-### Auth
+### Authentication
 
+#### Sign in
 You should do this as soon as your `deviceready` event has been fired. The plugin handles the various auth scenarios for you.
 
 ```
 googleplaygame.auth();
 ```
 
-### Submit Score
+#### Sign out
+You should provde the option for users to sign out
 
-Ensure you have had a successful callback from `gamecenter.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the `leaderboardId`.
+```
+googleplaygame.signout();
+```
+
+#### Auth status
+To check if the user is already logged in (eg. to determine weather to show the Log In or Log Out button), use the following
+
+```
+googleplaygame.isSignedIn({}, function (result) {
+	// ‘result’ is a JSON object with a single boolean property of ‘isSignedIn’
+	// {
+	// 		“isSignedIn” : true
+	// }
+	
+	console.log(“Do something with result.isSignedIn”);
+});
+```
+
+### Leaderboards
+
+#### Submit Score
+
+Ensure you have had a successful callback from `googleplaygame.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the `leaderboardId`.
 
 ```
 var data = {
@@ -45,27 +69,62 @@ var data = {
 googleplaygame.submitScore(data);
 ```
 
-### Show all leaderboards
+#### Show all leaderboards
 
-Launches the native Game Center leaderboard view controller to show all the leaderboards.
+Launches the native Play Games leaderboard view controller to show all the leaderboards.
 
 ```
 googleplaygame.showAllLeaderboards();
 ```
 
-### Unlock achievement
+#### Show specific leaderboard
 
-Unlocks an achievement to the game center:
+Launches directly into the specified leaderboard:
 
 ```
 var data = {
-	achievementId: "MyAchievementName"
+	leaderboardId: "board1"
+};
+googleplaygame.showLeaderboard(leaderboardId);
+```
+
+### Achievements
+#### Unlock achievement
+
+Unlocks the specified achievement:
+
+```
+var data = {
+	achievementId: "achievementId1"
 };
 
 googleplaygame.unlockAchievement(data);
 ```
 
-## Success/Failure callbacks
+#### Increment achievement
+
+Increments the specified incremental achievement by the provided numSteps:
+
+```
+var data = {	
+	achievementId: "achievementId1",
+	numSteps: 1
+};
+
+googleplaygame.incrementAchievement(data);
+```
+
+#### Show achievements
+
+Launches the native Play Games achievements view controller to show the user’s achievements.
+
+```
+googleplaygame.showAchievements();
+```
+
+### Other
+
+#### Success/Failure callbacks
 
 For all methods, you can optionally provide custom success/failure callbacks.
 

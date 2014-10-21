@@ -15,7 +15,7 @@ How it works: http://trinhtrunganh.com/cordova-plugin-for-google-play-game-servi
 
 ### Before you start
 
-Understand about `Leaderboard` and `Achivement`. Setting up your game in Google Play Developer Console https://developers.google.com/games/services/android/quickstart
+Understand about **Leaderboard** and **Achievement**. Setting up your game in Google Play Developer Console https://developers.google.com/games/services/android/quickstart
 
 ## Install
 
@@ -25,44 +25,120 @@ cordova plugin add https://github.com/ptgamr/cordova-google-play-game.git --vari
 
 ## Usage
 
-### Auth
+### Authentication
 
-You should do this as soon as your deviceready event has been fired. The plug handles the various auth scenarios for you.
+#### Sign in
+You should do this as soon as your `deviceready` event has been fired. The plugin handles the various auth scenarios for you.
 
 ```
-googleplaygame.auth(successCallback, failureCallback);
+googleplaygame.auth();
 ```
 
-### Submit Score
+#### Sign out
+You should provde the option for users to sign out
 
-Ensure you have had a successful callback from `gamecenter.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the leaderboardId.
+```
+googleplaygame.signout();
+```
+
+#### Auth status
+To check if the user is already logged in (eg. to determine weather to show the Log In or Log Out button), use the following
+
+```
+googleplaygame.isSignedIn(function (result) {
+	// ‘result’ is a JSON object with a single boolean property of ‘isSignedIn’
+	// {
+	// 		“isSignedIn” : true
+	// }
+	
+	console.log(“Do something with result.isSignedIn”);
+});
+```
+
+### Leaderboards
+
+#### Submit Score
+
+Ensure you have had a successful callback from `googleplaygame.auth()` first before attempting to submit a score. You should also have set up your leaderboard(s) in Google Play Game Console and use the leaderboard identifier assigned there as the `leaderboardId`.
 
 ```
 var data = {
     score: 10,
     leaderboardId: "board1"
 };
-googleplaygame.submitScore(successCallback, failureCallback, data);
+googleplaygame.submitScore(data);
 ```
 
-### Show leaderboard
+#### Show all leaderboards
 
-Launches the native Game Center leaderboard view controller for a leaderboard.
+Launches the native Play Games leaderboard view controller to show all the leaderboards.
 
 ```
-googleplaygame.showLeaderboard(successCallback, failureCallback, {});
+googleplaygame.showAllLeaderboards();
 ```
 
-### Report achievement
+#### Show specific leaderboard
 
-Reports an achievement to the game center:
+Launches directly into the specified leaderboard:
 
 ```
 var data = {
-	achievementId: "MyAchievementName"
+	leaderboardId: "board1"
+};
+googleplaygame.showLeaderboard(leaderboardId);
+```
+
+### Achievements
+#### Unlock achievement
+
+Unlocks the specified achievement:
+
+```
+var data = {
+	achievementId: "achievementId1"
 };
 
-googleplaygame.reportAchievement(successCallback, failureCallback, data);
+googleplaygame.unlockAchievement(data);
+```
+
+#### Increment achievement
+
+Increments the specified incremental achievement by the provided numSteps:
+
+```
+var data = {	
+	achievementId: "achievementId1",
+	numSteps: 1
+};
+
+googleplaygame.incrementAchievement(data);
+```
+
+#### Show achievements
+
+Launches the native Play Games achievements view controller to show the user’s achievements.
+
+```
+googleplaygame.showAchievements();
+```
+
+### Other
+
+#### Success/Failure callbacks
+
+For all methods, you can optionally provide custom success/failure callbacks.
+
+For example:
+
+```
+var successfullyLoggedIn = function () { ... };
+var failedToLogin = function () { ... };
+googleplaygame.auth(successfullyLoggedIn, failedToLogin);
+
+var data = { ... };
+var successfullySubmittedScore  = function () { ... };
+var failedToSubmitScore  = function () { ... };
+googleplaygame.submitScore(data, successfullySubmittedScore, failedToSubmitScore);
 ```
 
 ## Platform

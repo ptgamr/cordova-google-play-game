@@ -1,35 +1,37 @@
 var exec = require("cordova/exec");
+var GOOGLE_PLAY_GAME = "GooglePlayGame";
 
 var GooglePlayGame = function () {
-    this.name = "GooglePlayGame";
+    this.name = GOOGLE_PLAY_GAME;
 };
 
-GooglePlayGame.prototype.auth = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "auth", []);
-};
+var actions = ['auth', 'signOut', 'isSignedIn',
+               'submitScore', 'showAllLeaderboards', 'showLeaderboard',
+               'unlockAchievement', 'incrementAchievement', 'showAchievements'];
 
-GooglePlayGame.prototype.getPlayerImage = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "getPlayerImage", []);
-};
+actions.forEach(function (action) {
+    GooglePlayGame.prototype[action] = function (data, success, failure) {
+        var defaultSuccessCallback = function () {
+                console.log(GOOGLE_PLAY_GAME + '.' + action + ': executed successfully');
+            };
 
-GooglePlayGame.prototype.submitScore = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "submitScore", [data]);
-};
+        var defaultFailureCallback = function () {
+                console.warn(GOOGLE_PLAY_GAME + '.' + action + ': failed on execution');
+            };
 
-GooglePlayGame.prototype.showLeaderboard = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "showLeaderboard", [data]);
-};
+        if (typeof data === 'function') {
+            // Assume providing successCallback as 1st arg and possibly failureCallback as 2nd arg
+            success = data;
+            failure = success || defaultFailureCallback;
+            data = {};
+        } else {
+            data = data || {};
+            success = success || defaultSuccessCallback;
+            failure = failure || defaultFailureCallback;
+        }
 
-GooglePlayGame.prototype.reportAchievement = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "reportAchievement", [data]);
-};
-               
-GooglePlayGame.prototype.resetAchievements = function (success, failure) {
-    exec(success, failure, "GooglePlayGame", "resetAchievements", []);
-};
-
-GooglePlayGame.prototype.getAchievements = function (success, failure, data) {
-    exec(success, failure, "GooglePlayGame", "getAchievements", []);
-};
+        exec(success, failure, GOOGLE_PLAY_GAME, action, [data]);
+    }
+});
 
 module.exports = new GooglePlayGame();

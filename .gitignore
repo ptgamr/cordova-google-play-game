@@ -12,3 +12,6 @@ gen
 out
 # Gradle builds
 /build
+# IntelliJ/Android Studio
+.idea/*
+*.iml

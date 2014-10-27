@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
@@ -55,20 +56,26 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
     private static final int ACTIVITY_CODE_SHOW_ACHIEVEMENTS = 1;
 
-    private boolean isGpsAvailable = false;
-
     private GameHelper gameHelper;
 
     private CallbackContext authCallbackContext;
+    private int googlePlayServicesReturnCode;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        isGpsAvailable = (GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity()) == ConnectionResult.SUCCESS);
-        Log.d(LOGTAG, String.format("isGooglePlayServicesAvailable: %s", isGpsAvailable ? "true" : "false"));
+        Activity cordovaActivity = cordova.getActivity();
 
-        gameHelper = new GameHelper(cordova.getActivity(), BaseGameActivity.CLIENT_GAMES);
-        gameHelper.setup(this);
+        googlePlayServicesReturnCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordovaActivity);
+
+        if (googlePlayServicesReturnCode == ConnectionResult.SUCCESS) {
+            gameHelper = new GameHelper(cordovaActivity, BaseGameActivity.CLIENT_GAMES);
+            gameHelper.setup(this);
+        } else {
+            Log.w(LOGTAG, String.format("GooglePlayServices not available. Error: '" +
+                    GooglePlayServicesUtil.getErrorString(googlePlayServicesReturnCode) +
+                    "'. Error Code: " + googlePlayServicesReturnCode));
+        }
 
         cordova.setActivityResultCallback(this);
     }
@@ -77,6 +84,22 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext) throws JSONException {
 
         JSONObject options = inputs.optJSONObject(0);
+        if (gameHelper == null) {
+            Log.w(LOGTAG, String.format("Tried calling: '" + action + "', but error with GooglePlayServices"));
+            Log.w(LOGTAG, String.format("GooglePlayServices not available. Error: '" +
+                    GooglePlayServicesUtil.getErrorString(googlePlayServicesReturnCode) +
+                    "'. Error Code: " + googlePlayServicesReturnCode));
+
+            JSONObject googlePlayError = new JSONObject();
+            googlePlayError.put("errorCode", googlePlayServicesReturnCode);
+            googlePlayError.put("errorString", GooglePlayServicesUtil.getErrorString(googlePlayServicesReturnCode));
+
+            JSONObject result = new JSONObject();
+            result.put("googlePlayError", googlePlayError);
+
+            callbackContext.error(result);
+            return true;
+        }
 
         if (ACTION_AUTH.equals(action)) {
             executeAuth(callbackContext);

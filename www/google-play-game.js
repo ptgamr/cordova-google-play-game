@@ -21,8 +21,8 @@ actions.forEach(function (action) {
 
         if (typeof data === 'function') {
             // Assume providing successCallback as 1st arg and possibly failureCallback as 2nd arg
-            success = data;
             failure = success || defaultFailureCallback;
+            success = data;
             data = {};
         } else {
             data = data || {};

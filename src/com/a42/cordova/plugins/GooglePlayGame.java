@@ -294,7 +294,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
 
     @Override
     public void onSignInFailed() {
-        authCallbackContext.error("SIGN IN FALIED");
+        authCallbackContext.error("SIGN IN FAILED");
     }
 
     @Override

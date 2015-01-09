@@ -141,13 +141,6 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             @Override
             public void run() {
                 gameHelper.beginUserInitiatedSignIn();
-
-                Log.d(LOGTAG, "#beginUserInitiatedSignIn");
-
-                String at = gameHelper.getAccessToken();
-
-                Log.d(LOGTAG, "#getAccessToken: "+at);
-
             }
         });
     }

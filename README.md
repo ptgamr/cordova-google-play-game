@@ -61,6 +61,7 @@ Fetch the currently authenticated player's data.
 ```
 googleplaygame.showPlayer(function (playerData) {
 	...
+	console.log(“Authenticated as ”+playerData['displayName']);
 });
 ```
 

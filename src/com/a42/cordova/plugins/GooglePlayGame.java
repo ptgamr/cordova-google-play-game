@@ -36,6 +36,7 @@ import com.a42.cordova.plugins.GameHelper.GameHelperListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.Player;
 
 public class GooglePlayGame extends CordovaPlugin implements GameHelperListener {
 
@@ -52,6 +53,7 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
     private static final String ACTION_UNLOCK_ACHIEVEMENT = "unlockAchievement";
     private static final String ACTION_INCREMENT_ACHIEVEMENT = "incrementAchievement";
     private static final String ACTION_SHOW_ACHIEVEMENTS = "showAchievements";
+    private static final String ACTION_SHOW_PLAYER = "showPlayer";
 
     private static final int ACTIVITY_CODE_SHOW_LEADERBOARD = 0;
     private static final int ACTIVITY_CODE_SHOW_ACHIEVEMENTS = 1;
@@ -101,6 +103,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             return true;
         }
 
+        Log.i(LOGTAG, String.format("Processing action " + action + " ..."));
+
         if (ACTION_AUTH.equals(action)) {
             executeAuth(callbackContext);
         } else if (ACTION_SIGN_OUT.equals(action)) {
@@ -119,6 +123,8 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             executeUnlockAchievement(options, callbackContext);
         } else if (ACTION_INCREMENT_ACHIEVEMENT.equals(action)) {
             executeIncrementAchievement(options, callbackContext);
+        } else if (ACTION_SHOW_PLAYER.equals(action)) {
+            executeShowPlayer(callbackContext);
         } else {
             return false; // Tried to execute an unknown method
         }
@@ -135,6 +141,13 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             @Override
             public void run() {
                 gameHelper.beginUserInitiatedSignIn();
+
+                Log.d(LOGTAG, "#beginUserInitiatedSignIn");
+
+                String at = gameHelper.getAccessToken();
+
+                Log.d(LOGTAG, "#getAccessToken: "+at);
+
             }
         });
     }
@@ -291,6 +304,41 @@ public class GooglePlayGame extends CordovaPlugin implements GameHelperListener 
             }
         });
     }
+
+    private void executeShowPlayer(final CallbackContext callbackContext) {
+        Log.d(LOGTAG, "executeShowPlayer");
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    if (gameHelper.isSignedIn()) {
+
+                        Player player = Games.Players.getCurrentPlayer(gameHelper.getApiClient());
+
+                        JSONObject playerJson = new JSONObject();
+                        playerJson.put("displayName", player.getDisplayName());
+                        playerJson.put("playerId", player.getPlayerId());
+                        playerJson.put("title", player.getTitle());
+                        playerJson.put("iconImageUrl", player.getIconImageUrl());
+                        playerJson.put("hiResIconImageUrl", player.getHiResImageUrl());
+
+                        callbackContext.success(playerJson);
+
+                    } else {
+                        Log.w(LOGTAG, "executeShowPlayer: not yet signed in");
+                        callbackContext.error("executeShowPlayer: not yet signed in");
+                    }
+                }
+                catch(Exception e) {
+                    Log.w(LOGTAG, "executeShowPlayer: Error providing player data", e);
+                    callbackContext.error("executeShowPlayer: Error providing player data");
+                }
+            }
+        });
+    }
+
 
     @Override
     public void onSignInFailed() {

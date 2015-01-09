@@ -55,6 +55,16 @@ googleplaygame.isSignedIn(function (result) {
 });
 ```
 
+#### Player Information
+Fetch the currently authenticated player's data.
+
+```
+googleplaygame.showPlayer(function (playerData) {
+	...
+});
+```
+
+
 ### Leaderboards
 
 #### Submit Score

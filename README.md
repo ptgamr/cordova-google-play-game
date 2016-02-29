@@ -1,6 +1,8 @@
 cordova-google-play-game
 ========================
 
+*IMPORTANT NOTICE:* This library is nolonger actively maintained as I'm not working with Cordova anymore. Better to find abother library that does the job better.
+
 Cordova Plugin For Google Play Game Service
 
 ### Live demo
